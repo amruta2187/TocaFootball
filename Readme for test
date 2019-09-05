@@ -1,0 +1,60 @@
+The following are the requirements:
+
+ 
+************************************************************************************************************************
+What representation can be used to store the grid of cells state?
+Implement a function that initialises a N x N grid, randomly initialising either cells alive or dead.
+Create a class that encapsulates this as a method.
+Create a method, given a coordinate, that counts the number of neighbours at that coordinate.
+Add a method that implements the rules of Conways game of life to produce the games next iteration from the current.
+Create a method that displays the grid of cells, this can be either on the console or any other means you think possible.
+How would you make the grid of cells toroidal? Implement this is in the next iteration method.
+If this where a GPU kernel, what would it possibly look like? Note: You don’t have to write code here,
+maybe pseudo code if you feel it’s needed but more generally a description of porting the game of life to a GPU.
+*************************************************************************************************************************
+
+This file containes Details about the coding challenge based on Conway's Game of life,
+ 
+ 1. As the Grid is 2D matrix , here we are using vector of vector representation from STL library of C++to store the cell elements
+  we are taking input from the user for what size of Grid is required (considering Grid is Square of size N X N).
+  here we are using binary representation for the cell status of the grid , like "1" for live cell and "0" for Dead cell.
+  
+  2. To initialise matrix/ Grid we are using rand() function from the cstdlib of c++, and the Method "initialize(int N)"
+  in class alloperations returns the generated matrix.
+  
+  4.We have created a Method called countNeigh ,which takes arguments as a position x and y of the cell and plane.
+    if the cell is based in corner, method returns total neighbour will be 3 (dead + alive)
+    if the cell is on the edge(except corner) ,method returns neighbours will be 5
+    if the cell is in middle , method returns neighbour will be 8
+   
+   5.for the implementation of the rules, we have used in place value update scenario from GPU kernal point of view,
+   as which will involve space complexity O(1) and time complexity O(m x n).
+      we will trace each cell one by one ,and compute the rules which we are applying on current game plane.
+      we will update the value such that indicates current and next status of the cell.
+      modified rules are:
+
+Rule 1: current live cell with less than 2 live neighbours dies,we are changing the value of the cell to -1.
+   signifies the cell was live in current gameplane but for next gameplane dead.
+
+Rule 2: current live cell with 2 or 3 live neighbours to the next generation. Hence, no change in the value.
+
+Rule 3: current live cell with greter than 3 live neighbours dies,we are changing the value of cell to -1.
+signifies the cell was live in current gameplane but for next gameplane dead.
+
+Rule 4: current dead cell with exactly equal 3 live neighboursbecomes a live cell, we are changing the value of cell to 2.
+signifies the cell was dead in current game plane butbut for next game plane live.
+
+after updating the gameplane with new values for next iteration we will change the value > 1 to 1 and less than 1 or equal to 0
+
+  6.tortoidal representation of cells can be done using modulus representation . like 
+  tortoidal_array[x,y] = normal_array[x/N , y/N];
+  where N X N is diamension of the matrix or maximum limit of x and y.
+  
+  7.for GPU kernel, the if statement may cause warp divergence that slows down execution. and in Conway's game of life 
+  we are handling large nuber of if statements , In order to optimize we have minimized the 8 if statements required for 
+  all neighbours cell status check i.e (i-1,j-1),(i-1,j)(i-1,j).... so on, we have used for loop of k and l from value 0 to 3 
+  with neighb array.
+  
+  Thanks a lot for considering this coding Challenge.
+  Regards,
+  Amruta
